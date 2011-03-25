@@ -16,7 +16,7 @@
 
 	width:100%;
 	height: 1em;
-	background-color: lightgrey; 
+	/* background-color: lightgrey; */ 
 }
 
 .tickContainer {
@@ -26,7 +26,7 @@
 	
 	width: 1px;
 	height: 1em;
-	background-color:green;
+	/* background-color:green; */
 }
 
 .tick {
@@ -38,16 +38,21 @@
 	
 	text-align: center;
 }
+
+.otherDay {
+	color: grey;
+}
+
 </style>
 </head>
 <body id='body'>
 
-<script type="text/javascript">
-	function timeToI(hours, minutes, seconds) {
-		return (hours + (minutes + seconds/60) / 60) / 12;
-	}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 
-	function formatHour(hour) {
+<script type="text/javascript">
+	function formatHour(date) {
+		var hour = date.getHours();
+		
 		if (hour == 0) {
 			return '12am';
 		}
@@ -59,24 +64,63 @@
 		}
 		return (hour - 12) + 'pm';
 	}
-	
+
 	function makeSlider(curDate) {
 		var container = document.createElement('div');
 		container.setAttribute('class', 'timelineContainer');
 
-		var curI = timeToI(curDate.getHours(), curDate.getMinutes(), curDate.getSeconds());
+		function timeToP(d) {
+			return 100 * ((d.valueOf() - curDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
+		}
 		
-		for(i=0; i<24; i++) {
+		function makeTick(p, date) {
 			var tickContainer = document.createElement('div');
 			tickContainer.setAttribute('class', 'tickContainer');
-			tickContainer.style.left = 100*(0.5 + timeToI(i, 0, 0) - curI) + '%';
+			tickContainer.style.left = p + '%';
 			tickContainer.style.top = '0%';
-			container.appendChild(tickContainer);
 
 			var tick = document.createElement('div');
 			tick.setAttribute('class', 'tick');
-			tick.innerHTML = formatHour(i);
+			tick.innerHTML = formatHour(date);
 			tickContainer.appendChild(tick);
+
+			if (curDate.getDate() == date.getDate()) {
+				$(tick).addClass('today');
+			} else {
+				$(tick).addClass('otherDay');
+			}
+
+			return tickContainer;
+		}
+		
+		{
+			var d = new Date();
+			d.setTime(curDate.valueOf());
+			d.setMinutes(0);
+			d.setSeconds(0);
+
+			var p = timeToP(d);
+			while (p > 0) {				
+				container.appendChild(makeTick(p, d));
+				d.setHours(d.getHours() - 1);
+				p = timeToP(d);
+				console.debug(d, p);
+			}
+		}
+		
+		{
+			var d = new Date();
+			d.setTime(curDate.valueOf());
+			d.setMinutes(0);
+			d.setSeconds(0);
+
+			var p = timeToP(d);
+			while (p < 100) {				
+				container.appendChild(makeTick(p, d));
+				d.setHours(d.getHours() + 1);
+				p = timeToP(d);
+				console.debug(d, p);
+			}
 		}
 
 		return container;
@@ -96,6 +140,5 @@
 
 </script>
 
-	<div class="currentTime"></div>
 </body>
 </html>
