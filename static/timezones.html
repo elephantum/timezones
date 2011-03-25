@@ -111,7 +111,7 @@
 		return (hour - 12) + 'pm';
 	}
 
-	function makeSlider(realDate, localDate) {
+	function makeEntry(realDate, localDate) {
 		var res = $('.contentContainer > .entryTemplate').clone();
 		res.removeClass('entryTemplate');
 		var container = $('.timelineContainer', res);
@@ -160,12 +160,12 @@
 	var main = $('.contentContainer');
 	
 	var d = new Date();
-	main.append(makeSlider(d, d));
+	main.append(makeEntry(d, d));
 
 	var d12 = new Date();
 	d12.setTime(d.valueOf());
 	d12.setHours(d12.getHours() - 12);
-	main.append(makeSlider(d, d12));
+	main.append(makeEntry(d, d12));
 
 </script>
 
