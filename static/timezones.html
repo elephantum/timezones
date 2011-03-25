@@ -69,7 +69,7 @@
 		var container = document.createElement('div');
 		container.setAttribute('class', 'timelineContainer');
 
-		function timeToP(d) {
+		function dateToP(d) {
 			return 100 * ((d.valueOf() - curDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
 		}
 		
@@ -99,11 +99,11 @@
 			d.setMinutes(0);
 			d.setSeconds(0);
 
-			var p = timeToP(d);
+			var p = dateToP(d);
 			while (p > 0) {				
 				container.appendChild(makeTick(p, d));
 				d.setHours(d.getHours() - 1);
-				p = timeToP(d);
+				p = dateToP(d);
 				console.debug(d, p);
 			}
 		}
@@ -114,11 +114,11 @@
 			d.setMinutes(0);
 			d.setSeconds(0);
 
-			var p = timeToP(d);
+			var p = dateToP(d);
 			while (p < 100) {				
 				container.appendChild(makeTick(p, d));
 				d.setHours(d.getHours() + 1);
-				p = timeToP(d);
+				p = dateToP(d);
 				console.debug(d, p);
 			}
 		}
