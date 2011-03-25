@@ -1,13 +1,19 @@
 <html>
 <head>
 <style>
+.contentContainer {
+	position: relative;
+	width: 80%;
+	height: 100%;
+}
+
 .currentTime {
 	position: absolute;
 	left: 50%;
 	top: 0px;
 	
 	width: 1px;
-	height: 200px;
+	height: 100%;
 	background-color: red;
 }
 
@@ -45,11 +51,15 @@
 
 </style>
 </head>
-<body id='body'>
+<body>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<div class='contentContainer'>
+	<div class='currentTime'></div>
+</div>
 
-<script type="text/javascript">
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
+
+<script type='text/javascript'>
 	function formatHour(date) {
 		var hour = date.getHours();
 		
@@ -114,17 +124,13 @@
 		return container;
 	};
 
-	var body = document.getElementById('body');
+	var main = $('.contentContainer');
 	
 	var d = new Date();
-	body.appendChild(makeSlider(d));
+	main.append(makeSlider(d));
 
 	d.setHours(d.getHours() + 1);
-	body.appendChild(makeSlider(d));
-
-	var currentTime = document.createElement('div');
-	currentTime.setAttribute('class', 'currentTime');
-	body.appendChild(currentTime);
+	main.append(makeSlider(d));
 
 </script>
 
