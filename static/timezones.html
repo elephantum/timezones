@@ -72,6 +72,12 @@
 		function dateToP(d) {
 			return 100 * ((d.valueOf() - curDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
 		}
+
+		function pToDate(p) {
+			var d = new Date();
+			d.setTime((p / 100 - 0.5) * 24 * 60 * 60 * 1000 + curDate.valueOf());
+			return d;
+		}
 		
 		function makeTick(p, date) {
 			var tickContainer = document.createElement('div');
@@ -92,34 +98,16 @@
 
 			return tickContainer;
 		}
-		
-		{
-			var d = new Date();
-			d.setTime(curDate.valueOf());
-			d.setMinutes(0);
-			d.setSeconds(0);
 
-			var p = dateToP(d);
-			while (p > 0) {				
-				container.appendChild(makeTick(p, d));
-				d.setHours(d.getHours() - 1);
-				p = dateToP(d);
-				console.debug(d, p);
-			}
-		}
-		
 		{
-			var d = new Date();
-			d.setTime(curDate.valueOf());
-			d.setMinutes(0);
+			var d = pToDate(0);
 			d.setSeconds(0);
+			d.setMinutes(0);
+			d.setHours(d.getHours() + 1);
 
-			var p = dateToP(d);
-			while (p < 100) {				
-				container.appendChild(makeTick(p, d));
+			for (var i = 0; i < 24; i++) {
+				container.appendChild(makeTick(dateToP(d), d));
 				d.setHours(d.getHours() + 1);
-				p = dateToP(d);
-				console.debug(d, p);
 			}
 		}
 
