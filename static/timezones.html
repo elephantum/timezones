@@ -10,7 +10,8 @@
 .entryContainer {
 	position: relative;
 	width: 100%;
-	height: 1em;
+	height: 2em;
+	padding: 0.5em;
 }
 
 .description {
@@ -68,6 +69,10 @@
 	display: none;
 }
 
+.tickTemplate {
+	display: none;
+}
+
 </style>
 </head>
 <body>
@@ -79,6 +84,11 @@
 		</div>
 		<div class='timelineContainer'>
 			<div class='currentTime'></div>
+			<div class='tickContainer tickTemplate'>
+				<div class='tick'>
+					<span class='tickText'>2am</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -117,15 +127,11 @@
 		}
 		
 		function makeTick(p, date) {
-			var tickContainer = document.createElement('div');
-			tickContainer.setAttribute('class', 'tickContainer');
-			tickContainer.style.left = p + '%';
-			tickContainer.style.top = '0%';
+			var tick = $('.tickTemplate', res).clone();
+			tick.removeClass('tickTemplate');
+			tick.css('left', p + '%');
 
-			var tick = document.createElement('div');
-			tick.setAttribute('class', 'tick');
-			tick.innerHTML = formatHour(date);
-			tickContainer.appendChild(tick);
+			$('.tickText', tick).text(formatHour(date));
 
 			if (realDate.getDate() == date.getDate()) {
 				$(tick).addClass('today');
@@ -133,7 +139,7 @@
 				$(tick).addClass('otherDay');
 			}
 
-			return tickContainer;
+			return tick;
 		}
 
 		{
