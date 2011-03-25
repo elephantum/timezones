@@ -75,17 +75,17 @@
 		return (hour - 12) + 'pm';
 	}
 
-	function makeSlider(curDate) {
+	function makeSlider(realDate, localDate) {
 		var container = document.createElement('div');
 		container.setAttribute('class', 'timelineContainer');
 
 		function dateToP(d) {
-			return 100 * ((d.valueOf() - curDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
+			return 100 * ((d.valueOf() - localDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
 		}
 
 		function pToDate(p) {
 			var d = new Date();
-			d.setTime((p / 100 - 0.5) * 24 * 60 * 60 * 1000 + curDate.valueOf());
+			d.setTime((p / 100 - 0.5) * 24 * 60 * 60 * 1000 + localDate.valueOf());
 			return d;
 		}
 		
@@ -100,7 +100,7 @@
 			tick.innerHTML = formatHour(date);
 			tickContainer.appendChild(tick);
 
-			if (curDate.getDate() == date.getDate()) {
+			if (realDate.getDate() == date.getDate()) {
 				$(tick).addClass('today');
 			} else {
 				$(tick).addClass('otherDay');
@@ -127,10 +127,12 @@
 	var main = $('.contentContainer');
 	
 	var d = new Date();
-	main.append(makeSlider(d));
+	main.append(makeSlider(d, d));
 
-	d.setHours(d.getHours() + 1);
-	main.append(makeSlider(d));
+	var d12 = new Date();
+	d12.setTime(d.valueOf());
+	d12.setHours(d12.getHours() - 12);
+	main.append(makeSlider(d, d12));
 
 </script>
 
