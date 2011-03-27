@@ -121,13 +121,13 @@ html {
 					<div class='currentTime'></div>
 					
 					<div class='tick tickTemplate'>
-						<div class='centeredText tickText'>
+						<div class='centeredText text'>
 							2am
 						</div>
 					</div>
 					
 					<div class='date dateTemplate'>
-						<div class='centeredText dateText'>
+						<div class='centeredText dateText text'>
 							Mar 27
 						</div>
 					</div>
@@ -192,32 +192,24 @@ html {
 			return d;
 		}
 		
-		function makeTick(p, date) {
-			var tick = $('.tickTemplate', res).clone();
-			tick.removeClass('tickTemplate');
-			tick.css('left', p + '%');
+		function makeTickElement(template, text, date) {
+			p = dateToP(date);
+			
+			var element = $('.' + template, res).clone();
+			element.removeClass(template);
+			element.css('left', p + '%');
 
-			$('.tickText', tick).text(formatHour(date));
+			$('.text', element).text(text);
 
 			if (realDate.getDate() == date.getDate()) {
-				$(tick).addClass('today');
+				$(element).addClass('today');
 			} else {
-				$(tick).addClass('otherDay');
+				$(element).addClass('otherDay');
 			}
 
-			return tick;
+			return element;
 		}
 
-		function makeDateNote(p, date) {
-			var dateEl = $('.dateTemplate', res).clone();
-			dateEl.removeClass('dateTemplate');
-			dateEl.css('left', p + '%');
-
-			$('.dateText', dateEl).text(formatDate(date));
-
-			return dateEl;
-		}
-		
 		{
 			function ticksDate(i) {
 				var d = pToDate(0);
@@ -230,11 +222,10 @@ html {
 
 			for (var i = 0; i < 24; i++) {
 				var d = ticksDate(i);
-				p = dateToP(d);
-				container.append(makeTick(p, d));
+				container.append(makeTickElement('tickTemplate', formatHour(d), d));
 
 				if (d.getHours() == 0) {
-					container.append(makeDateNote(p, d));
+					container.append(makeTickElement('dateTemplate', formatDate(d), d));
 				}
 			}
 		}
