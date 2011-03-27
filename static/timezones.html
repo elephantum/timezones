@@ -168,21 +168,16 @@ html {
 	}
 	
 	function makeEntry(realDate, name, tzDiff) {
-		var localDate = new Date();
-		localDate.setTime(realDate.valueOf());
-		localDate.setMinutes(localDate.getMinutes() + tzDiff*60);
-
-		console.debug('realDate', realDate);
-		console.debug('localDate', localDate);
-		
 		var res = $('.entryTemplate').clone();
 		res.removeClass('entryTemplate');
 		var container = $('.timeline', res);
 
 		$('.descriptionText', res).text(name);
+
+		var localUtime = realDate.valueOf() + tzDiff * 60 * 60 * 1000;
 		
 		function dateToP(d) {
-			return 100 * ((d.valueOf() - localDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
+			return 100 * ((d.valueOf() - localUtime) / 24 / 60 / 60 / 1000 + 0.5);
 		}
 
 		function makeTickElement(template, text, date) {
@@ -204,8 +199,7 @@ html {
 		}
 
 		function ticksDate(i) {
-			preciseVal = (localDate.valueOf() + 
-					(i + 1 - 12) * 60 * 60 * 1000);
+			preciseVal = localUtime + (i + 1 - 12) * 60 * 60 * 1000;
 
 			truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
 			
