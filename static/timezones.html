@@ -26,7 +26,7 @@ html {
 	top: 0px;
 	left: 0px;
 	
-	width: 10%;
+	width: 20%;
 
 	text-align: right;	
 }
@@ -35,16 +35,16 @@ html {
 	position: absolute;
 	
 	top: 0px;
-	left: 10%;
+	left: 20%;
 
-	width:90%;
+	width:80%;
 	height: 1em;
 }
 
 .timelineContainerInner {
 	position: relative;
 
-	margin-right: 1em;
+	margin-right: 2em;
 	margin-left: 1em;
 
 	height: 1em;
@@ -111,26 +111,34 @@ html {
 <body>
 
 <div class='contentContainer'>
-	<div class='entryContainer entryTemplate'>
-		<div class='description descriptionText'>
-			Dublin
-		</div>
-		<div class='timelineContainer'>
-			<div class='timelineContainerInner timeline'>
-				<div class='currentTime'></div>
-				
-				<div class='tick tickTemplate'>
-					<div class='centeredText tickText'>
-						2am
+	<div class='entries'>
+		<div class='entryContainer entryTemplate'>
+			<div class='description descriptionText'>
+				Dublin
+			</div>
+			<div class='timelineContainer'>
+				<div class='timelineContainerInner timeline'>
+					<div class='currentTime'></div>
+					
+					<div class='tick tickTemplate'>
+						<div class='centeredText tickText'>
+							2am
+						</div>
 					</div>
-				</div>
-				
-				<div class='date dateTemplate'>
-					<div class='centeredText dateText'>
-						Mar 27
+					
+					<div class='date dateTemplate'>
+						<div class='centeredText dateText'>
+							Mar 27
+						</div>
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	
+	<div class='entryContainer'>
+		<div class='description'>
+			<input value='Add another' style='font-size:large; text-align: right; color: grey'></input>
 		</div>
 	</div>
 </div>
@@ -168,7 +176,7 @@ html {
 		console.debug('realDate', realDate);
 		console.debug('localDate', localDate);
 		
-		var res = $('.contentContainer > .entryTemplate').clone();
+		var res = $('.entryTemplate').clone();
 		res.removeClass('entryTemplate');
 		var container = $('.timeline', res);
 
@@ -234,7 +242,7 @@ html {
 		return res;
 	};
 
-	var main = $('.contentContainer');
+	var main = $('.entries');
 	
 	var d = new Date();
 
