@@ -138,7 +138,7 @@ html {
 	
 	<div class='entryContainer'>
 		<div class='description'>
-			<input value='Add another' style='font-size:large; text-align: right; color: grey'></input>
+			<input value='Add another city' style='font-size:large; text-align: right; color: grey'></input>
 		</div>
 	</div>
 </div>
@@ -167,17 +167,24 @@ html {
 				date.getDate());
 	}
 	
-	function makeEntry(realDate, name, tzDiff) {
+	function makeEntry(localDate, name, tzDiff) {
 		var res = $('.entryTemplate').clone();
 		res.removeClass('entryTemplate');
 		var container = $('.timeline', res);
 
 		$('.descriptionText', res).text(name);
 
-		var localUtime = realDate.valueOf() + tzDiff * 60 * 60 * 1000;
+		var localUtime = localDate.valueOf() + tzDiff * 60 * 60 * 1000;
 		
 		function dateToP(d) {
 			return 100 * ((d.valueOf() - localUtime) / 24 / 60 / 60 / 1000 + 0.5);
+		}
+
+		function ticksDate(i) {
+			preciseVal = localUtime + (i + 1 - 12) * 60 * 60 * 1000;
+
+			truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
+			return new Date(truncatedMinsSecs);
 		}
 
 		function makeTickElement(template, text, date) {
@@ -189,21 +196,13 @@ html {
 
 			$('.text', element).text(text);
 
-			if (realDate.getDate() == date.getDate()) {
+			if (localDate.getDate() == date.getDate()) {
 				$(element).addClass('today');
 			} else {
 				$(element).addClass('otherDay');
 			}
 
 			return element;
-		}
-
-		function ticksDate(i) {
-			preciseVal = localUtime + (i + 1 - 12) * 60 * 60 * 1000;
-
-			truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
-			
-			return new Date(truncatedMinsSecs);
 		}
 
 		for (var i = 0; i < 24; i++) {
@@ -223,7 +222,7 @@ html {
 	
 	var d = new Date();
 
-	main.append(makeEntry(d, 'Dublin', 0));
+	main.append(makeEntry(d, 'local', 0));
 	main.append(makeEntry(d, 'Moscow', 3));
 	main.append(makeEntry(d, 'San-Francisco', -8));
 	
