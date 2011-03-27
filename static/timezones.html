@@ -255,18 +255,16 @@ html {
 			}
 		}
 
-		return res;
+		$('.entries').append(res);
 	}
-
-	var main = $('.entries');
 
 	var d = new Date();
 
 	$('.currentTimeText .text').text(formatHourMinute(d));
 			
-	main.append(makeEntry(d, 'local', 0));
-	main.append(makeEntry(d, 'Moscow', 3));
-	main.append(makeEntry(d, 'San-Francisco', -8));
+	makeEntry(d, 'local', 0);
+	makeEntry(d, 'Moscow', 3);
+	makeEntry(d, 'San-Francisco', -8);
 	
 </script>
 
