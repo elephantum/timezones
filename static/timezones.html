@@ -114,6 +114,15 @@ html {
 	display: none;
 }
 
+.newCityInput {
+	font-size: large;
+	text-align: right;
+}
+
+.inactive {
+	color: grey;
+}
+
 </style>
 </head>
 <body>
@@ -159,7 +168,7 @@ html {
 	
 	<div class='entryContainer'>
 		<div class='description'>
-			<input value='Add another city' style='font-size:large; text-align: right; color: grey'></input>
+			<input value='Add another city' class='newCityInput inactive'></input>
 		</div>
 	</div>
 </div>
@@ -205,6 +214,10 @@ html {
 		return (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()] + 
 				' ' +
 				date.getDate());
+	}
+
+	function makeCurrentTime(date) {
+		$('.currentTimeText .text').text(formatHourMinute(date));
 	}
 	
 	function makeEntry(localDate, name, tzDiff) {
@@ -260,11 +273,30 @@ html {
 
 	var d = new Date();
 
-	$('.currentTimeText .text').text(formatHourMinute(d));
-			
+	makeCurrentTime(d);
 	makeEntry(d, '', 0);
 	makeEntry(d, 'Moscow', 3);
 	makeEntry(d, 'San-Francisco', -8);
+
+	$('.newCityInput').focusin(function (event) {
+		input = event.target;
+		$(input).removeClass('inactive');
+
+		if (!input.userValue) { 
+			input.oldValue = input.value;
+			input.value = '';
+		}
+	});
+	
+	$('.newCityInput').focusout(function (event) {
+		if (input.value != '') {
+			input.userValue = true;
+		} else {
+			$(event.target).addClass('inactive');
+			input.userValue = false;
+			input.value = input.oldValue;
+		}
+	});
 	
 </script>
 
