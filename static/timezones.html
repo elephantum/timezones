@@ -170,7 +170,6 @@ html {
 	function makeEntry(realDate, name, tzDiff) {
 		var localDate = new Date();
 		localDate.setTime(realDate.valueOf());
-		localDate.setHours(localDate.getHours() + tzDiff);
 		localDate.setMinutes(localDate.getMinutes() + tzDiff*60);
 
 		console.debug('realDate', realDate);
@@ -186,12 +185,6 @@ html {
 			return 100 * ((d.valueOf() - localDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
 		}
 
-		function pToDate(p) {
-			var d = new Date();
-			d.setTime((p / 100 - 0.5) * 24 * 60 * 60 * 1000 + localDate.valueOf());
-			return d;
-		}
-		
 		function makeTickElement(template, text, date) {
 			p = dateToP(date);
 			
@@ -211,16 +204,17 @@ html {
 		}
 
 		function ticksDate(i) {
-			var d = pToDate(0);
-			d.setSeconds(0);
-			d.setMinutes(0);
-			d.setHours(d.getHours() + 1 + i);
+			preciseVal = (localDate.valueOf() + 
+					(i + 1 - 12) * 60 * 60 * 1000);
 
-			return d;
+			truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
+			
+			return new Date(truncatedMinsSecs);
 		}
 
 		for (var i = 0; i < 24; i++) {
 			var d = ticksDate(i);
+				
 			container.append(makeTickElement('tickTemplate', formatHour(d), d));
 
 			if (d.getHours() == 0) {
@@ -236,7 +230,7 @@ html {
 	var d = new Date();
 
 	main.append(makeEntry(d, 'Dublin', 0));
-	main.append(makeEntry(d, 'Moscow', 1));
+	main.append(makeEntry(d, 'Moscow', 3));
 	main.append(makeEntry(d, 'San-Francisco', -8));
 	
 </script>
