@@ -50,14 +50,22 @@ html {
 	height: 1em;
 }
 
-.currentTime {
+.currentTimeText {
+	position: absolute;
+	left: 50%;
+	
+	width: 1px;
+	height: 3em;
+}
+
+.currentTimeMark {
 	position: absolute;
 	left: 50%;
 	top: -0.5em;
 	
 	width: 1px;
 	height: 3em;
-	background-color: red;
+	background-color: lightgrey;
 }
 
 .tick {
@@ -111,6 +119,19 @@ html {
 <body>
 
 <div class='contentContainer'>
+	<div class='entryContainer'>
+		<div class='timelineContainer'>
+			<div class='timelineContainerInner'>
+				<div class='currentTimeMark'></div>
+				<div class='currentTimeText'>
+					<div class='centeredText text'>
+						12:45am
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class='entries'>
 		<div class='entryContainer entryTemplate'>
 			<div class='description descriptionText'>
@@ -118,7 +139,7 @@ html {
 			</div>
 			<div class='timelineContainer'>
 				<div class='timelineContainerInner timeline'>
-					<div class='currentTime'></div>
+					<div class='currentTimeMark'></div>
 					
 					<div class='tick tickTemplate'>
 						<div class='centeredText text'>
@@ -161,6 +182,25 @@ html {
 		return (hour - 12); // + 'pm';
 	}
 
+	function formatHourMinute(date) {
+		var hour = date.getHours();
+		var minutes = '' + date.getMinutes();
+		if (date.getMinutes() < 10) {
+			minutes = '0' + minutes;
+		}
+		
+		if (hour == 0) {
+			return '12:' + minutes + 'am';
+		}
+		if (hour < 12) {
+			return hour + ':' + minutes + 'am';
+		}
+		if (hour == 12) {
+			return '12:' + minutes + 'pm';
+		}
+		return (hour - 12) + ':' + minutes + 'pm';
+	}
+
 	function formatDate(date) {
 		return (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()] + 
 				' ' +
@@ -187,7 +227,7 @@ html {
 			return new Date(truncatedMinsSecs);
 		}
 
-		function makeTickElement(template, text, date) {
+		function makeTickSubelement(template, text, date) {
 			p = dateToP(date);
 			
 			var element = $('.' + template, res).clone();
@@ -207,11 +247,11 @@ html {
 
 		for (var i = 0; i < 24; i++) {
 			var d = ticksDate(i);
-				
-			container.append(makeTickElement('tickTemplate', formatHour(d), d));
 
-			if (d.getHours() == 0) {
-				container.append(makeTickElement('dateTemplate', formatDate(d), d));
+			container.append(makeTickSubelement('tickTemplate', formatHour(d), d));
+
+			if (d.getHours() == 0 || i == 0) {
+				container.append(makeTickSubelement('dateTemplate', formatDate(d), d));
 			}
 		}
 
@@ -219,9 +259,11 @@ html {
 	}
 
 	var main = $('.entries');
-	
+
 	var d = new Date();
 
+	$('.currentTimeText .text').text(formatHourMinute(d));
+			
 	main.append(makeEntry(d, 'local', 0));
 	main.append(makeEntry(d, 'Moscow', 3));
 	main.append(makeEntry(d, 'San-Francisco', -8));
