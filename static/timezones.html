@@ -9,15 +9,16 @@ html {
 .contentContainer {
 	position: relative;
 	
-	width: 95%;
-	height: 95%;
+	width: 100%;
+	height: 100%;
 }
 
 .entryContainer {
 	position: relative;
 	width: 100%;
 	height: 2em;
-	padding: 0.5em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 .description {
@@ -25,9 +26,9 @@ html {
 	top: 0px;
 	left: 0px;
 	
-	text-align: right;
-	
 	width: 10%;
+
+	text-align: right;	
 }
 
 .timelineContainer {
@@ -37,6 +38,15 @@ html {
 	left: 10%;
 
 	width:90%;
+	height: 1em;
+}
+
+.timelineContainerInner {
+	position: relative;
+
+	margin-right: 1em;
+	margin-left: 1em;
+
 	height: 1em;
 }
 
@@ -50,16 +60,14 @@ html {
 	background-color: red;
 }
 
-.tickContainer {
+.tick {
 	position: absolute;
-	
-	text-align: center;
 	
 	width: 1px;
 	height: 1em;
 }
 
-.tick {
+.centeredText {
 	position: absolute;
 	left: -2em;
 	
@@ -67,6 +75,19 @@ html {
 	height: 1em;
 	
 	text-align: center;
+}
+
+.date {
+	position: absolute;
+	
+	width: 1px;
+	height: 1em;
+	
+	top: 1em;
+}
+
+.dateText {
+	font-size: small;
 }
 
 .otherDay {
@@ -81,20 +102,33 @@ html {
 	display: none;
 }
 
+.dateTemplate {
+	display: none;
+}
+
 </style>
 </head>
 <body>
 
 <div class='contentContainer'>
 	<div class='entryContainer entryTemplate'>
-		<div class='description'>
+		<div class='description descriptionText'>
 			Dublin
 		</div>
 		<div class='timelineContainer'>
-			<div class='currentTime'></div>
-			<div class='tickContainer tickTemplate'>
-				<div class='tick'>
-					<span class='tickText'>2am</span>
+			<div class='timelineContainerInner timeline'>
+				<div class='currentTime'></div>
+				
+				<div class='tick tickTemplate'>
+					<div class='centeredText tickText'>
+						2am
+					</div>
+				</div>
+				
+				<div class='date dateTemplate'>
+					<div class='centeredText dateText'>
+						Mar 27
+					</div>
 				</div>
 			</div>
 		</div>
@@ -106,7 +140,6 @@ html {
 <script type='text/javascript'>
 	function formatHour(date) {
 		var hour = date.getHours();
-		return hour;
 		
 		if (hour == 0) {
 			return '12am';
@@ -120,16 +153,26 @@ html {
 		return (hour - 12); // + 'pm';
 	}
 
+	function formatDate(date) {
+		return (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()] + 
+				' ' +
+				date.getDate());
+	}
+	
 	function makeEntry(realDate, name, tzDiff) {
 		var localDate = new Date();
 		localDate.setTime(realDate.valueOf());
+		localDate.setHours(localDate.getHours() + tzDiff);
 		localDate.setMinutes(localDate.getMinutes() + tzDiff*60);
+
+		console.debug('realDate', realDate);
+		console.debug('localDate', localDate);
 		
 		var res = $('.contentContainer > .entryTemplate').clone();
 		res.removeClass('entryTemplate');
-		var container = $('.timelineContainer', res);
+		var container = $('.timeline', res);
 
-		$('.description', res).text(name);
+		$('.descriptionText', res).text(name);
 		
 		function dateToP(d) {
 			return 100 * ((d.valueOf() - localDate.valueOf()) / 24 / 60 / 60 / 1000 + 0.5);
@@ -157,15 +200,34 @@ html {
 			return tick;
 		}
 
+		function makeDateNote(p, date) {
+			var dateEl = $('.dateTemplate', res).clone();
+			dateEl.removeClass('dateTemplate');
+			dateEl.css('left', p + '%');
+
+			$('.dateText', dateEl).text(formatDate(date));
+
+			return dateEl;
+		}
+		
 		{
-			var d = pToDate(0);
-			d.setSeconds(0);
-			d.setMinutes(0);
-			d.setHours(d.getHours() + 1);
+			function ticksDate(i) {
+				var d = pToDate(0);
+				d.setSeconds(0);
+				d.setMinutes(0);
+				d.setHours(d.getHours() + 1 + i);
+
+				return d;
+			}
 
 			for (var i = 0; i < 24; i++) {
-				container.append(makeTick(dateToP(d), d));
-				d.setHours(d.getHours() + 1);
+				var d = ticksDate(i);
+				p = dateToP(d);
+				container.append(makeTick(p, d));
+
+				if (d.getHours() == 0) {
+					container.append(makeDateNote(p, d));
+				}
 			}
 		}
 
@@ -177,9 +239,7 @@ html {
 	var d = new Date();
 
 	main.append(makeEntry(d, 'Dublin', 0));
-
-	main.append(makeEntry(d, 'Moscow', 3));
-
+	main.append(makeEntry(d, 'Moscow', 1));
 	main.append(makeEntry(d, 'San-Francisco', -8));
 	
 </script>
