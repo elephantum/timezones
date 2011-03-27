@@ -210,23 +210,21 @@ html {
 			return element;
 		}
 
-		{
-			function ticksDate(i) {
-				var d = pToDate(0);
-				d.setSeconds(0);
-				d.setMinutes(0);
-				d.setHours(d.getHours() + 1 + i);
+		function ticksDate(i) {
+			var d = pToDate(0);
+			d.setSeconds(0);
+			d.setMinutes(0);
+			d.setHours(d.getHours() + 1 + i);
 
-				return d;
-			}
+			return d;
+		}
 
-			for (var i = 0; i < 24; i++) {
-				var d = ticksDate(i);
-				container.append(makeTickElement('tickTemplate', formatHour(d), d));
+		for (var i = 0; i < 24; i++) {
+			var d = ticksDate(i);
+			container.append(makeTickElement('tickTemplate', formatHour(d), d));
 
-				if (d.getHours() == 0) {
-					container.append(makeTickElement('dateTemplate', formatDate(d), d));
-				}
+			if (d.getHours() == 0) {
+				container.append(makeTickElement('dateTemplate', formatDate(d), d));
 			}
 		}
 
