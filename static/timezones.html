@@ -1,5 +1,7 @@
 <html>
 <head>
+<link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'></link>
+
 <style>
 html {
 	font-family: sans-serif;
@@ -176,8 +178,9 @@ html {
 </div>
 
 <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js'></script>
 
-<script type='text/javascript'>
+<script type='text/javascript'><!--
 	function formatHour(date) {
 		var hour = date.getHours();
 		
@@ -273,46 +276,56 @@ html {
 		$('.entries').append(res);
 	}
 
-	var d = new Date();
-
-	makeCurrentTime(d);
-	makeEntry(d, '', 0);	
-
-	$('.newCityInput').focusin(function (event) {
-		var input = event.target;
-		$(input).removeClass('inactive');
-
-		if (!input.userValue) { 
-			input.oldValue = input.value;
-			input.value = '';
-		}
-	});
+	$(document).ready(function(){
+		var d = new Date();
 	
-	$('.newCityInput').focusout(function (event) {
-		var input = event.target;
-		if (input.value != '') {
-			input.userValue = true;
-		} else {
-			$(event.target).addClass('inactive');
-			input.userValue = false;
-			input.value = input.oldValue;
-		}
-	});
+		makeCurrentTime(d);
+		makeEntry(d, '', 0);	
+	
+		$('.newCityInput').focusin(function (event) {
+			var input = event.target;
+			$(input).removeClass('inactive');
+	
+			if (!input.userValue) { 
+				input.oldValue = input.value;
+				input.value = '';
+			}
 
-	$('.newCityForm').submit(function (event) {
-		var val = $('.newCityInput').attr('value');
+			$(input).change();
+		});
 		
-		if (val == 'Moscow') {
-			makeEntry(d, 'Moscow', 3);
-		}
-		if (val == 'San-Francisco') {
-			makeEntry(d, 'San-Francisco', -8);
-		}
+		$('.newCityInput').focusout(function (event) {
+			var input = event.target;
+			if (input.value != '') {
+				input.userValue = true;
+			} else {
+				$(event.target).addClass('inactive');
+				input.userValue = false;
+				input.value = input.oldValue;
+			}
+		});
+	
+		$('.newCityInput').autocomplete({
+			minLength: 0,
+			source: ['Moscow', 'New York']
+		});
 
-		$('.newCityInput').attr('value', '');
-		$('.newCityInput').blur();
-		return false;
-	});
+		$('.newCityForm').submit(function (event) {
+			var val = $('.newCityInput').attr('value');
+			
+			if (val == 'Moscow') {
+				makeEntry(d, 'Moscow', 3);
+			}
+			if (val == 'San-Francisco') {
+				makeEntry(d, 'San-Francisco', -8);
+			}
+	
+			$('.newCityInput').attr('value', '');
+			$('.newCityInput').blur();
+			return false;
+		});
+
+	})
 	
 </script>
 
