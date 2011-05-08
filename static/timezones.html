@@ -2,7 +2,7 @@
 <head>
 <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'></link>
 
-<style>
+<style type="text/css">
 html {
 	font-family: sans-serif;
 	font-size: large;
@@ -126,6 +126,7 @@ html {
 }
 
 </style>
+
 </head>
 <body>
 
@@ -153,16 +154,16 @@ html {
 					<div class='currentTimeMark'></div>
 					
 					<div class='tick tickTemplate'>
-						<div class='centeredText text'>
+						<div class='centeredText timeText'>
 							2am
+						</div>
+						<div class='date'>
+							<div class='centeredText dateText'>
+								Mar 27
+							</div>
 						</div>
 					</div>
 					
-					<div class='date dateTemplate'>
-						<div class='centeredText dateText text'>
-							Mar 27
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -180,7 +181,23 @@ html {
 <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js'></script>
 
-<script type='text/javascript'><!--
+<script type='text/javascript'>
+	var currentDate = new Date();
+	var timers = [];
+
+	function addTimer(f) {
+		timers.push(f);
+		f(currentDate);
+	}
+	
+	function runTimers() {
+		currentDate = new Date();
+		
+		timers.forEach(function(f) {f(currentDate)});
+	}
+	
+	setInterval(runTimers, 10000);
+
 	function formatHour(date) {
 		var hour = date.getHours();
 		
@@ -221,8 +238,11 @@ html {
 				date.getDate());
 	}
 
-	function makeCurrentTime(date) {
-		$('.currentTimeText .text').text(formatHourMinute(date));
+	function makeCurrentTime() {
+		function update(date) {
+			$('.currentTimeText .text').text(formatHourMinute(date));
+		}
+		addTimer(update);
 	}
 	
 	function makeEntry(localDate, name, tzDiff) {
@@ -232,54 +252,68 @@ html {
 
 		$('.descriptionText', res).text(name);
 
-		var localUtime = localDate.valueOf() + tzDiff * 60 * 60 * 1000;
+		var ticks = [];
 		
-		function dateToP(d) {
-			return 100 * ((d.valueOf() - localUtime) / 24 / 60 / 60 / 1000 + 0.5);
-		}
-
-		function ticksDate(i) {
-			preciseVal = localUtime + (i + 1 - 12) * 60 * 60 * 1000;
-
-			truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
-			return new Date(truncatedMinsSecs);
-		}
-
-		function makeTickSubelement(template, text, date) {
-			p = dateToP(date);
-			
-			var element = $('.' + template, res).clone();
-			element.removeClass(template);
-			element.css('left', p + '%');
-
-			$('.text', element).text(text);
-
-			if (localDate.getDate() == date.getDate()) {
-				$(element).addClass('today');
-			} else {
-				$(element).addClass('otherDay');
-			}
-
-			return element;
-		}
-
 		for (var i = 0; i < 24; i++) {
-			var d = ticksDate(i);
+			var element = $('.tickTemplate', res).clone();
+			element.removeClass('tickTemplate');
+			container.append(element);
+			ticks[i] = element;
+		}
 
-			container.append(makeTickSubelement('tickTemplate', formatHour(d), d));
-
-			if (d.getHours() == 0 || i == 0) {
-				container.append(makeTickSubelement('dateTemplate', formatDate(d), d));
+		function update(localDate) {
+			var localUtime = localDate.valueOf() + tzDiff * 60 * 60 * 1000;
+			
+			function dateToP(d) {
+				return 100 * ((d.valueOf() - localUtime) / 24 / 60 / 60 / 1000 + 0.5);
+			}
+	
+			function ticksDate(i) {
+				preciseVal = localUtime + (i + 1 - 12) * 60 * 60 * 1000;
+	
+				truncatedMinsSecs = Math.floor(preciseVal / 60 / 60 / 1000) * 60 * 60 * 1000;
+				return new Date(truncatedMinsSecs);
+			}
+	
+			function updateTick(element, i, date) {
+				p = dateToP(date);
+				
+				element.css('left', p + '%');
+	
+				$('.timeText', element).text(formatHour(date));
+	
+				if (localDate.getDate() == date.getDate()) {
+					$(element).addClass('today');
+					$(element).removeClass('otherDay')
+				} else {
+					$(element).removeClass('today');
+					$(element).addClass('otherDay');
+				}
+	
+				if (d.getHours() == 0 || i == 0) {
+					$('.dateText', element).text(formatDate(date));
+				} else {
+					$('.dateText', element).text('');
+				}
+				
+				return element;
+			}
+	
+			for (var i = 0; i < 24; i++) {
+				var d = ticksDate(i);
+	
+				updateTick(ticks[i], i, d);
 			}
 		}
+		addTimer(update);
 
 		$('.entries').append(res);
 	}
 
-	$(document).ready(function(){
+	function bootstrap(){
 		var d = new Date();
-	
-		makeCurrentTime(d);
+		
+		makeCurrentTime();
 		makeEntry(d, '', 0);	
 	
 		$('.newCityInput').focusin(function (event) {
@@ -324,8 +358,9 @@ html {
 			$('.newCityInput').blur();
 			return false;
 		});
-
-	})
+	}
+	
+	$(document).ready(bootstrap);
 	
 </script>
 
