@@ -265,7 +265,7 @@ html {
 		addTimer(update);
 	}
 	
-	function makeEntry(localDate, name, tzDiff) {
+	function makeEntry(name, tzDiff) {
 		var res = $('.entryTemplate').clone();
 		res.removeClass('entryTemplate');
 		var container = $('.timeline', res);
@@ -331,10 +331,8 @@ html {
 	}
 
 	function bootstrap(){
-		var d = new Date();
-		
 		makeCurrentTime();
-		makeEntry(d, '', 0);	
+		makeEntry('', 0);	
 	
 		$('.newCityInput').focusin(function (event) {
 			var input = event.target;
@@ -368,10 +366,10 @@ html {
 			var val = $('.newCityInput').attr('value');
 			
 			if (val == 'Moscow') {
-				makeEntry(d, 'Moscow', 3);
+				makeEntry('Moscow', 3);
 			}
 			if (val == 'San-Francisco') {
-				makeEntry(d, 'San-Francisco', -8);
+				makeEntry('San-Francisco', -8);
 			}
 	
 			$('.newCityInput').attr('value', '');
