@@ -184,20 +184,18 @@ html {
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js'></script>
 
 <script type='text/javascript'>
-	var cityData = [
-		{
-			name: 'Moscow',
+	var cityData = {
+		'Moscow': {
 			tzDiff: 3
 		},
-		{
-			name: 'San-Francisco',
+		'San-Francisco': {
 			tzDiff: -8
 		}
-	]
+	}
 	
 	var cityNames = []
 	for (var i in cityData) {
-		cityNames.push(cityData[i].name);
+		cityNames.push(i);
 	}
 </script>
 
@@ -365,12 +363,7 @@ html {
 		$('.newCityForm').submit(function (event) {
 			var val = $('.newCityInput').attr('value');
 			
-			if (val == 'Moscow') {
-				makeEntry('Moscow', 3);
-			}
-			if (val == 'San-Francisco') {
-				makeEntry('San-Francisco', -8);
-			}
+			makeEntry(val, cityData[val].tzDiff);
 	
 			$('.newCityInput').attr('value', '');
 			$('.newCityInput').blur();
